@@ -2,9 +2,20 @@
 
 This [Home Assistant](https://www.home-assistant.io/) blueprint recommends window ventilation when the **indoor absolute humidity (AH)** exceeds outdoor AH by a configurable threshold. It runs every 5 miutes, but only sends **one notification when conditions change** (OK → Ventilate or Ventilate → OK).
 
-<img width="1170" height="397" alt="image" src="https://github.com/user-attachments/assets/97d22647-fa95-4ff4-b1cd-39d08733688a" />
+[![Import blueprint to HA](https://community-assets.home-assistant.io/original/4X/1/a/1/1a129e306bc6a339cf8a2b9222553254a1909b6f.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/main/blueprints/automation/ha-open-window-blueprint/dynamic_ventilation_edge.yaml)
+
+## 🚀 Import into Home Assistant
+
+Use the "import blueprint to HA" button above, or:
+
+In Home Assistant:
+
+1. Go to **Settings → Automations & Scenes → Blueprints → Import Blueprint**.
+2. Paste this URL: `https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/main/blueprints/automation/ha-open-window-blueprint/dynamic_ventilation_edge.yaml`
 
 ## 📋 Features
+
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/97d22647-fa95-4ff4-b1cd-39d08733688a" />
 
 - Calculates **Absolute Humidity** (g/m³) indoors and outdoors from temperature + relative humidity.
 - Uses the **Magnus formula** for [saturation vapor pressure of water](https://en.wikipedia.org/wiki/Humidity#Saturation_vapor_pressure_of_water).
@@ -16,18 +27,6 @@ This [Home Assistant](https://www.home-assistant.io/) blueprint recommends windo
   - 🪟 **Open window to ventilate**
   - 🪟 **Close window**
 
-
-## 🚀 Import into Home Assistant
-
-In Home Assistant:
-
-1. Go to **Settings → Automations & Scenes → Blueprints → Import Blueprint**.
-2. Paste this URL:
-
-```
-https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/main/blueprints/automation/ha-open-window-blueprint/dynamic_ventilation_edge.yaml
-```
-
 ## ⚙️ Inputs
 
 - Indoor/Outdoor **temperature** and **humidity** sensors
@@ -38,7 +37,7 @@ https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/main/bl
 - Threshold (default 3 g/m³)
 - Customizable message templates for **ventilate** and **close**
 
-<img width="1414" height="1600" alt="image" src="https://github.com/user-attachments/assets/7bd22b99-487a-4d6b-aa2e-76fd3d0e6dac" />
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/7bd22b99-487a-4d6b-aa2e-76fd3d0e6dac" />
 
 ---
 
