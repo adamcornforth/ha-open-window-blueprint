@@ -11,7 +11,7 @@ Use the "import blueprint to HA" button above, or:
 In Home Assistant:
 
 1. Go to **Settings → Automations & Scenes → Blueprints → Import Blueprint**.
-2. Paste this URL: `https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/main/blueprints/automation/ha-open-window-blueprint/dynamic_ventilation_edge.yaml`
+2. Paste this URL: `https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/refs/heads/main/blueprints/automation/adamcornforth/dynamic_ventilation_edge.yaml`
 
 ## 📋 Features
 
