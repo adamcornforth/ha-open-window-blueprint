@@ -3,6 +3,7 @@
 This [Home Assistant](https://www.home-assistant.io/) blueprint recommends window ventilation when the **indoor absolute humidity (AH)** exceeds outdoor AH by a configurable threshold.  
 It only sends **one notification when conditions change** (OK → Ventilate or Ventilate → OK), so you won’t get spammed.
 
+<img width="1170" height="397" alt="image" src="https://github.com/user-attachments/assets/97d22647-fa95-4ff4-b1cd-39d08733688a" />
 
 ## 📋 Features
 
@@ -38,6 +39,8 @@ https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/main/bl
 - Threshold (default 3 g/m³)
 - Customizable message templates for **ventilate** and **close**
 
+<img width="1414" height="1600" alt="image" src="https://github.com/user-attachments/assets/7bd22b99-487a-4d6b-aa2e-76fd3d0e6dac" />
+
 ---
 
 ## 🧪 Example Notification
@@ -56,3 +59,4 @@ Outdoor 80%, 12.9 g/m³ — 18.6°C
 ## 🙌 Credits
 
 - Inspired by the original “Open window recommendation (AH-based)” blueprint from the Home Assistant community.
+- https://community.home-assistant.io/t/open-window-recommendation-absolute-humidity-based-blueprint/897695 
