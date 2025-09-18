@@ -1,0 +1,15 @@
+# Home Assistant & Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Backup / temp files
+*.bak
+*.swp
+*.swo
+*.tmp
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

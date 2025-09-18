@@ -1,0 +1,221 @@
+blueprint:
+  name: Dynamic Ventilation (edge-triggered, AH-based)
+  description: >
+    Recommends ventilation when indoor absolute humidity (AH) exceeds outdoor AH
+    by a threshold. Sends ONE notification on OK→NEEDS VENTILATION and ONE on
+    NEEDS VENTILATION→OK. No window/zone sensor required.
+  domain: automation
+
+  input:
+    temp_inside:
+      name: Indoor temperature sensor
+      selector: { entity: { domain: sensor } }
+
+    rh_inside:
+      name: Indoor humidity sensor
+      selector: { entity: { domain: sensor } }
+
+    temp_outside:
+      name: Outdoor temperature sensor
+      selector: { entity: { domain: sensor } }
+
+    rh_outside:
+      name: Outdoor humidity sensor
+      selector: { entity: { domain: sensor } }
+
+    state_helper:
+      name: Helper toggle to track "ventilation needed"
+      description: Create an input_boolean helper and select it here.
+      selector: { entity: { domain: input_boolean } }
+
+    notify_push:
+      name: Push notification service (e.g., notify.mobile_app_your_phone)
+      selector: { text: {} }
+
+    notify_tts:
+      name: (Optional) TTS service (e.g., notify.alexa_media_kitchen)
+      default: ""
+      selector: { text: {} }
+
+    room_name:
+      name: Room name (used in messages)
+      selector: { text: {} }
+
+    threshold:
+      name: Threshold for AH difference (g/m³)
+      default: 3
+      selector:
+        number:
+          min: 0.5
+          max: 10
+          step: 0.1
+          unit_of_measurement: "g/m³"
+          mode: slider
+
+    message_ventilate:
+      name: Message when ventilation is recommended
+      default: "{{ room_name }} should be ventilated."
+      selector: { text: {} }
+
+    message_close:
+      name: Message when air is back to normal
+      default: "Humidity in {{ room_name }} is back to normal."
+      selector: { text: {} }
+
+trigger:
+  - platform: time_pattern
+    minutes: "/5"
+
+# Only proceed when all sensors have valid values
+condition:
+  - condition: template
+    value_template: "{{ have_valid_data }}"
+
+variables:
+  # Bind inputs
+  temp_inside_entity: !input temp_inside
+  rh_inside_entity: !input rh_inside
+  temp_outside_entity: !input temp_outside
+  rh_outside_entity: !input rh_outside
+  state_helper_entity: !input state_helper
+
+  room_name: !input room_name
+  threshold: !input threshold
+  notify_push: !input notify_push
+  notify_tts: !input notify_tts
+  message_ventilate: !input message_ventilate
+  message_close: !input message_close
+
+  # Availability guard — prevents bogus 0-values when sensors are unavailable.
+  have_valid_data: >
+    {{
+      states(temp_inside_entity) not in ['unknown','unavailable','none','']
+      and states(temp_outside_entity) not in ['unknown','unavailable','none','']
+      and states(rh_inside_entity)   not in ['unknown','unavailable','none','']
+      and states(rh_outside_entity)  not in ['unknown','unavailable','none','']
+    }}
+
+  # Euler's number e — used because Home Assistant Jinja doesn't expose exp().
+  # We'll compute exp(x) as e_const ** x.
+  # Ref: https://en.wikipedia.org/wiki/E_(mathematical_constant)
+  e_const: 2.718281828459045
+
+  # Readings (defaults won't be used when have_valid_data is true)
+  t_in:  "{{ states(temp_inside_entity)  | float(0) }}"     # °C
+  rh_in: "{{ states(rh_inside_entity)   | float(0) }}"      # %
+  t_out: "{{ states(temp_outside_entity) | float(0) }}"     # °C
+  rh_out: "{{ states(rh_outside_entity)  | float(0) }}"     # %
+
+  # --- Humidity maths notes ---------------------------------------------------
+  # We use the Magnus formula (one common parameterisation) to estimate the
+  # saturation vapour pressure e_s(T) in hPa:
+  #   e_s(T) ≈ 6.112 * exp( (17.62 * T) / (243.12 + T) ),  T in °C
+  # Ref: https://en.wikipedia.org/wiki/Humidity#Saturation_vapor_pressure_of_water
+  #
+  # Actual vapour pressure e = (RH/100) * e_s.
+  #
+  # Absolute humidity AH (g/m³) via ideal gas law:
+  #   AH ≈ 216.7 * e / T_K,   with T_K = T + 273.15 (Kelvin) and e in hPa.
+  # The factor 216.7 converts hPa and Kelvin into g/m³.
+  # Ref: https://en.wikipedia.org/wiki/Humidity#Absolute_humidity
+  # ---------------------------------------------------------------------------
+
+  # Absolute humidity (g/m³) — RH is percent, so divide by 100
+  af_in: >
+    {{
+      216.7
+      * ((rh_in / 100)
+         * (6.112 * (e_const ** ((17.62 * t_in) / (243.12 + t_in)))))
+      / (273.15 + t_in)
+    }}
+
+  af_out: >
+    {{
+      216.7
+      * ((rh_out / 100)
+         * (6.112 * (e_const ** ((17.62 * t_out) / (243.12 + t_out)))))
+      / (273.15 + t_out)
+    }}
+
+  # Differences (signed; use |abs if you prefer absolute)
+  delta_af: "{{ af_in - af_out }}"
+  delta_rh: "{{ rh_in - rh_out }}"
+
+  # Edge logic
+  ventilation_needed_now: "{{ (delta_af | float(0)) > (threshold | float(0)) }}"
+  helper_is_on: "{{ is_state(state_helper_entity, 'on') }}"
+
+  # Titles for notifications (keep your emojis)
+  title_open:  "🪟 Open window to ventilate — {{ room_name }}"
+  title_close: "🪟 Close window — {{ room_name }}"
+
+  # Tags
+  tag_ventilate: "{{ 'ventilate_' ~ room_name | lower | replace(' ', '_') }}"
+  tag_close: "{{ 'ventilate_close_' ~ room_name | lower | replace(' ', '_') }}"
+
+action:
+  - choose:
+
+      # Edge: OK -> NEEDS VENTILATION (helper off -> should be on)
+      - conditions:
+          - condition: template
+            value_template: "{{ ventilation_needed_now and not helper_is_on }}"
+        sequence:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: !input state_helper
+
+          - service: "{{ notify_push }}"
+            data:
+              title: "{{ title_open }}"
+              message: |
+                {{ message_ventilate }}
+                Indoor {{ rh_in | round(0) }}%, {{ af_in | round(1) }} g/m³ — {{ t_in | round(1) }}°C
+                Outdoor {{ rh_out | round(0) }}%, {{ af_out | round(1) }} g/m³ — {{ t_out | round(1) }}°C
+                ΔRH={{ delta_rh | round(0) }}%, ΔAH={{ delta_af | round(1) }} g/m³ (thr {{ threshold | round(1) }})
+              data:
+                tag: "{{ tag_ventilate }}"
+
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ (notify_tts | default('')) | string != '' }}"
+                sequence:
+                  - service: "{{ notify_tts }}"
+                    data:
+                      message: >
+                        {{ message_ventilate }}
+                      data: { type: announce }
+
+      # Edge: NEEDS VENTILATION -> OK (helper on -> should be off)
+      - conditions:
+          - condition: template
+            value_template: "{{ (not ventilation_needed_now) and helper_is_on }}"
+        sequence:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: !input state_helper
+
+          - service: "{{ notify_push }}"
+            data:
+              title: "{{ title_close }}"
+              message: |
+                {{ message_close }}
+                Indoor {{ rh_in | round(0) }}%, {{ af_in | round(1) }} g/m³ — {{ t_in | round(1) }}°C
+                Outdoor {{ rh_out | round(0) }}%, {{ af_out | round(1) }} g/m³ — {{ t_out | round(1) }}°C
+                ΔRH={{ delta_rh | round(0) }}%, ΔAH={{ delta_af | round(1) }} g/m³ (thr {{ threshold | round(1) }})
+              data:
+                tag: "{{ tag_close }}"
+
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ (notify_tts | default('')) | string != '' }}"
+                sequence:
+                  - service: "{{ notify_tts }}"
+                    data:
+                      message: >
+                        {{ message_close }}
+                      data: { type: announce }
+
+mode: single
