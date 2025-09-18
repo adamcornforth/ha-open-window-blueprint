@@ -1,14 +1,13 @@
 # 🪟 Dynamic Ventilation (Edge-Triggered, AH-Based)
 
-This [Home Assistant](https://www.home-assistant.io/) blueprint recommends window ventilation when the **indoor absolute humidity (AH)** exceeds outdoor AH by a configurable threshold.  
-It only sends **one notification when conditions change** (OK → Ventilate or Ventilate → OK), so you won’t get spammed.
+This [Home Assistant](https://www.home-assistant.io/) blueprint recommends window ventilation when the **indoor absolute humidity (AH)** exceeds outdoor AH by a configurable threshold. It runs every 5 miutes, but only sends **one notification when conditions change** (OK → Ventilate or Ventilate → OK).
 
 <img width="1170" height="397" alt="image" src="https://github.com/user-attachments/assets/97d22647-fa95-4ff4-b1cd-39d08733688a" />
 
 ## 📋 Features
 
 - Calculates **Absolute Humidity** (g/m³) indoors and outdoors from temperature + relative humidity.
-- Uses the **Magnus formula** for [Saturation vapor pressure of water — Wikipedia](https://en.wikipedia.org/wiki/Humidity#Saturation_vapor_pressure_of_water).
+- Uses the **Magnus formula** for [saturation vapor pressure of water](https://en.wikipedia.org/wiki/Humidity#Saturation_vapor_pressure_of_water).
 - Notifies via:
   - Push notifications (e.g. `notify.mobile_app_*`)
   - Optional TTS announcements (Alexa, Google, etc.) **<-- currently unsupported**
