@@ -6,23 +6,6 @@ This blueprint was created due to me getting a bit confused at when to open the 
 
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fadamcornforth%2Fha-open-window-blueprint%2Frefs%2Fheads%2Fmain%2Fblueprints%2Fautomation%2Fadamcornforth%2Fdynamic_ventilation_edge.yaml)
 
-## ⚙️ 1. Create a helper
-
-You need a boolean helper to track the state of the room you wish to monitor (room is OK, or needs ventilation).
-
-1. Go to **Settings → Devices & Services → Helpers → Create Helper**.
-2. Name it something like `input_boolean.ventilation_needed_dining_room` and keep a note of this for the inputs when you import the blueprint into HA. 
-
-## 🚀 2. Import into Home Assistant
-
-Use the "import blueprint to HA" button above, or:
-
-In Home Assistant:
-
-1. Go to **Settings → Automations & Scenes → Blueprints → Import Blueprint**.
-2. Paste this URL: `https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/refs/heads/main/blueprints/automation/adamcornforth/dynamic_ventilation_edge.yaml`.
-3. Configure the blueprint with your sensors, boolean helper created above, and notification service (typically your phone's HA app instance, e.g. `notify.mobile_app_*`).
-
 ## 📋 Features
 
 Note how the relative humidity outside is higher, but the automation has identified that ventilation will decrease the inside relative humidity anyway!
@@ -38,8 +21,27 @@ Note how the relative humidity outside is higher, but the automation has identif
 - Clear emoji titles:
   - 🪟 **Open window to ventilate**
   - 🪟 **Close window**
+ 
+## Setup 
 
-## ⚙️ Inputs
+### ⚙️ 1. Create a helper
+
+You need a boolean helper to track the state of the room you wish to monitor (room is OK, or needs ventilation).
+
+1. Go to **Settings → Devices & Services → Helpers → Create Helper**.
+2. Name it something like `input_boolean.ventilation_needed_dining_room` and keep a note of this for the inputs when you import the blueprint into HA. 
+
+### 🚀 2. Import into Home Assistant
+
+Use the "import blueprint to HA" button above, or:
+
+In Home Assistant:
+
+1. Go to **Settings → Automations & Scenes → Blueprints → Import Blueprint**.
+2. Paste this URL: `https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/refs/heads/main/blueprints/automation/adamcornforth/dynamic_ventilation_edge.yaml`.
+3. Configure the blueprint with your sensors, boolean helper created above, and notification service (typically your phone's HA app instance, e.g. `notify.mobile_app_*`).
+
+### ⚙️ 3. Inputs
 
 - Indoor/Outdoor **temperature** and **humidity** sensors
 - An `input_boolean` helper (used internally to remember the current state)
