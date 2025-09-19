@@ -15,7 +15,7 @@ In Home Assistant:
 
 ## 📋 Features
 
-<img width="500" alt="image" src="https://github.com/user-attachments/assets/97d22647-fa95-4ff4-b1cd-39d08733688a" />
+<img width="500" alt="image" src="https://github.com/user-attachments/assets/9a2a0f02-2419-46b5-89d3-5e3546366659" />
 
 - Calculates **Absolute Humidity** (g/m³) indoors and outdoors from temperature + relative humidity.
 - Uses the **Magnus formula** for [saturation vapor pressure of water](https://en.wikipedia.org/wiki/Humidity#Saturation_vapor_pressure_of_water).
