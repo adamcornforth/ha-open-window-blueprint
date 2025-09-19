@@ -53,21 +53,6 @@ In Home Assistant:
 
 <img width="900" alt="image" src="https://github.com/user-attachments/assets/7bd22b99-487a-4d6b-aa2e-76fd3d0e6dac" />
 
----
-
-## 🧪 Example Notification
-
-**Title:** 🪟 Open window to ventilate — Dining Room  
-**Message:**
-```
-Dining Room should be ventilated.
-Indoor 72%, 12.7 g/m³ — 20.1°C
-Outdoor 80%, 12.9 g/m³ — 18.6°C
-ΔRH = -8%, ΔAH = -0.2 g/m³ (thr 3.0)
-```
-
----
-
 ## 🙌 Credits
 
 - Inspired by the original “Open window recommendation (AH-based)” blueprint from the Home Assistant community.
