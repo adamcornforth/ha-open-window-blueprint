@@ -2,6 +2,8 @@
 
 This [Home Assistant](https://www.home-assistant.io/) blueprint recommends window ventilation when the **indoor absolute humidity (AH)** exceeds outdoor AH by a configurable threshold. It runs every 5 minutes, but only sends **one notification when conditions change** (OK → Ventilate or Ventilate → OK).
 
+This blueprint was created due to me getting a bit confused at when to open the windows when the relative humidity is higher outside than inside - which is particularly common in the UK in autumn and spring. In winter it's a bit of a no brainer - just keep the windows open as the air is cool enough that even if outside the humidity is high, it will drop in humidity as it gets warmed up by your home's heating / thermal mass. When the outside temperature is close to the inside temperature is when the maths is funky!
+
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fraw.githubusercontent.com%2Fadamcornforth%2Fha-open-window-blueprint%2Frefs%2Fheads%2Fmain%2Fblueprints%2Fautomation%2Fadamcornforth%2Fdynamic_ventilation_edge.yaml)
 
 ## 🚀 Import into Home Assistant
@@ -14,6 +16,8 @@ In Home Assistant:
 2. Paste this URL: `https://raw.githubusercontent.com/adamcornforth/ha-open-window-blueprint/refs/heads/main/blueprints/automation/adamcornforth/dynamic_ventilation_edge.yaml`
 
 ## 📋 Features
+
+Note how the relative humidity outside is higher, but the automation has identified that ventilation will decrease the inside relative humidity anyway!
 
 <img width="500" alt="image" src="https://github.com/user-attachments/assets/9a2a0f02-2419-46b5-89d3-5e3546366659" />
 
